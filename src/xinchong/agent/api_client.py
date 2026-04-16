@@ -15,7 +15,9 @@ class APIClient:
         # 国际
         "openai", "anthropic", "deepseek", "openrouter", "google", "xai", "cohere",
         # 国内
-        "minimax", "douyin", "wenxin", "tongyi", "hunyuan", "spark", "zhipu"
+        "minimax", "douyin", "wenxin", "tongyi", "hunyuan", "spark", "zhipu",
+        # 其他
+        "opencode", "opencode-go"
     ]
     
     # 默认模型
@@ -34,7 +36,10 @@ class APIClient:
         "tongyi": "qwen-plus",
         "hunyuan": "hunyuan-pro",
         "spark": "spark-pro",
-        "zhipu": "glm-4"
+        "zhipu": "glm-4",
+        # OpenCode
+        "opencode": "deepseek-chat",
+        "opencode-go": "deepseek-chat"
     }
     
     # API 端点
@@ -53,7 +58,10 @@ class APIClient:
         "tongyi": "https://dashscope.aliyuncs.com/api/v1/services/aigc/text-generation/generation",
         "hunyuan": "https://hunyuan.tencentcloudapi.com/v3/text/chatcompletion",
         "spark": "wss://spark-api.xf-yun.com/v3.5/chat",
-        "zhipu": "https://open.bigmodel.cn/api/paas/v4/chat/completions"
+        "zhipu": "https://open.bigmodel.cn/api/paas/v4/chat/completions",
+        # OpenCode
+        "opencode": "https://opencode.cn/v1/chat/completions",
+        "opencode-go": "https://opencode.cn/v1/chat/completions"
     }
     
     def __init__(self, provider: str = "openai", model: str = None):
@@ -79,7 +87,10 @@ class APIClient:
             "tongyi": "TONGYI_API_KEY",
             "hunyuan": "HUNYUAN_API_KEY",
             "spark": "SPARK_API_KEY",
-            "zhipu": "ZHIPU_API_KEY"
+            "zhipu": "ZHIPU_API_KEY",
+            # OpenCode
+            "opencode": "OPENCODE_ZEN_API_KEY",
+            "opencode-go": "OPENCODE_ZEN_API_KEY"
         }
         
         key = os.environ.get(env_vars.get(self.provider, ""))

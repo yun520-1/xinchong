@@ -1,0 +1,15 @@
+#!/bin/bash
+# XinChong 心虫 CLI wrapper
+
+XINCHONG_DIR="$HOME/.hermes/xinchong"
+PYTHON="$HOME/.hermes/venv/bin/python"
+
+# Use venv python if available, otherwise fall back to system python
+if [ -f "$PYTHON" ]; then
+    PYTHON_CMD="$PYTHON"
+else
+    PYTHON_CMD="python3"
+fi
+
+# Run xinchong
+exec "$PYTHON_CMD" "$XINCHONG_DIR/xinchong.py" "$@"
