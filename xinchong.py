@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
 XinChong CLI 入口
-支持 setup / run / chat / models 等命令
+支持 setup / run / chat / models / skills 等命令
 """
 
 import os
@@ -325,6 +325,34 @@ def main():
         else:
             print("❌ 需要 -p <provider>")
     
+    elif cmd == "skills":
+        # 技能管理命令
+        from xinchong.skills import list_skills, search_skills, install_skill, remove_skill
+        
+        subcmd = args[0] if args else None
+        
+        if subcmd == "list":
+            list_skills()
+        elif subcmd == "search" and len(args) > 1:
+            search_skills(" ".join(args[1:]))
+        elif subcmd == "install" and len(args) > 1:
+            install_skill(args[1])
+        elif subcmd == "remove" and len(args) > 1:
+            remove_skill(args[1])
+        elif subcmd == "add" and len(args) > 1:
+            # alias for install
+            install_skill(args[1])
+        else:
+            print("""
+📦 技能管理命令:
+
+  xinchong skills list               列出所有可用技能
+  xinchong skills search <关键词>    搜索技能
+  xinchong skills install <名称>     安装技能
+  xinchong skills remove <名称>      移除技能
+  xinchong skills add <名称>         安装技能 (alias)
+            """)
+    
     elif cmd is None:
         print_banner()
         print("""
@@ -340,6 +368,10 @@ XinChong 心虫 v9.2.0
   xinchong remove -p opencode           移除 provider
   xinchong run -p opencode -m gpt-4 "你好"    运行单次对话
   xinchong chat [-p opencode] [-m gpt-4]      交互式对话
+  xinchong skills list              列出所有技能
+  xinchong skills search <关键词>   搜索技能
+  xinchong skills install <名称>    安装技能
+  xinchong skills remove <名称>     移除技能
 
 交互模式命令:
   /models             列出可用模型

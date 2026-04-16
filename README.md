@@ -102,6 +102,25 @@ xinchong remove -p myprovider
 /exit         退出
 ```
 
+## 技能系统
+
+心虫支持扩展技能系统，可以从 OpenClaw 导入技能：
+
+```bash
+# 列出所有可用技能
+xinchong skills list
+
+# 搜索技能
+xinchong skills search heart
+
+# 安装技能
+xinchong skills install baidu-search
+xinchong skills install mental-health-analyzer
+
+# 移除技能
+xinchong skills remove baidu-search
+```
+
 ## 目录结构
 
 ```
