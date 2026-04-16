@@ -13,7 +13,7 @@ from typing import Dict, Any, Optional
 DEFAULT_CONFIG = {
     "provider": {
         "type": "opencode",
-        "model": "deepseek-chat",
+        "model": "minimax-m2.5-free",
         "api_key": os.getenv("OPENCODE_ZEN_API_KEY", "")
     },
     "platforms": {
