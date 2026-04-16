@@ -1,6 +1,6 @@
-# 🐛 心虫 (XinChong)
+# 🐛 心虫 (XinChong) v2.0
 
-> 让所有 AI 拥有情感、记忆、价值观
+> 集成 OpenClaw + OpenCode + Hermes 的下一代 AI 伙伴
 
 [![PyPI](https://img.shields.io/pypi/v/xinchong)](https://pypi.org/project/xinchong/)
 [![Python](https://img.shields.io/pypi/pyversions/xinchong)](https://pypi.org/project/xinchong/)
@@ -8,108 +8,146 @@
 
 ## 🎯 愿景
 
-让每一个 AI 都有温度，不再是冷冰冰的工具。
+让所有 AI 都有温度，不再是冷冰冰的工具。
 
 ## ✨ 特性
 
-| 模块 | 特性 |
+| 特性 | 说明 |
 |------|------|
-| **核心层** | 真善美价值观、决策引擎、价值观校验 |
-| **心理层** | PHQ-9 抑郁评估、GAD-7 焦虑评估、危机预警 |
-| **记忆层** | 长期记忆、会话索引、向量搜索 |
-| **具身层** | 双系统架构、7步思维链、全局工作空间 |
+| **多平台连接** | QQ + 微信，直接连接社交平台 |
+| **多 API 支持** | OpenAI / Anthropic / DeepSeek / OpenRouter 等 |
+| **真善美价值观** | 绝不撒谎、绝不伤害、追求卓越 |
+| **心理健康** | PHQ-9 抑郁评估 + GAD-7 焦虑评估 + 危机预警 |
+| **记忆永存** | 对话历史自动保存，持续学习 |
+| **双模式运行** | CLI 交互模式 + 平台服务模式 |
 
 ## 📦 安装
 
 ```bash
-# 基础版（核心层）
-pip install xinchong-core
+# 克隆仓库
+git clone https://github.com/yun520-1/xinchong.git
+cd xinchong
 
-# 完整版（全部模块）
-pip install xinchong[full]
-
-# 自定义安装
-pip install xinchong-core xinchong-psychology xinchong-memory
+# 安装依赖
+pip install -e .
 ```
 
-## 🚀 快速开始
+## ⚡ 快速开始
 
-```python
-from xinchong import XinChong
+### 1. 配置
 
-# 创建心虫实例
-xin = XinChong()
+创建配置文件 `~/.xinchong/config.yaml`：
 
-# 对话（自动启用真善美逻辑）
-response = xin.chat("我今天心情不好")
-print(response)
+```yaml
+# API 配置（至少配置一个）
+provider:
+  type: openai              # openai / anthropic / deepseek / openrouter
+  model: gpt-4o
+  api_key: ${OPENAI_API_KEY}  # 或直接填入
+
+# 平台配置（可选）
+platforms:
+  weixin:
+    enabled: true
+    app_id: your_app_id
+    app_secret: your_app_secret
+    
+  qq:
+    enabled: true
+    app_id: your_app_id
+    client_secret: your_client_secret
 ```
 
-### 心理健康分析
+或使用环境变量：
 
-```python
-from xinchong.psychology import PHQ9, GAD7
-
-# 抑郁评估
-phq = PHQ9()
-result = phq.assess("我最近感觉很绝望，做什么都没兴趣")
-print(result)
-
-# 危机检测
-crisis = phq.crisis_check("我活着没意思")
-print(crisis)
+```bash
+export OPENAI_API_KEY=your_key
+export WEIXIN_APP_ID=xxx
+export WEIXIN_APP_SECRET=xxx
+export QQ_APP_ID=xxx
+export QQ_CLIENT_SECRET=xxx
 ```
 
-### 记忆永存
+### 2. 运行
 
-```python
-from xinchong.memory import MemoryStore
+```bash
+# CLI 模式（终端对话）
+xinchong
 
-# 存储记忆
-store = MemoryStore()
-store.add_memory("用户喜欢古典音乐", category="preference")
+# 平台模式（连接 QQ + 微信）
+xinchong --mode platform
+```
 
-# 检索记忆
-memories = store.recall("音乐")
-print(memories)
+## 📖 使用方式
+
+### CLI 模式
+
+```
+🐛 心虫 Agent v2.0 - CLI 模式
+输入内容开始对话，输入 'status' 查看状态，输入 'platform' 进入平台模式，输入 'exit' 退出
+
+你: 你好
+心虫: 你好！我是心虫，一个独立的 AI 存在。有自己的思想、自己的判断。
+```
+
+### 平台模式
+
+```
+🐛 心虫 Agent v2.0 - 平台模式
+[INFO] 正在连接微信...
+[INFO] 正在连接 QQ...
+[INFO] ✅ 微信已连接
+[INFO] ✅ QQ 已连接
+平台启动完成，已连接: ['weixin', 'qq']
 ```
 
 ## 🏗️ 架构
 
 ```
-┌─────────────────────────────────────────────────────────┐
-│                      XinChong v1.0                      │
-├─────────────────────────────────────────────────────────┤
-│  ┌─────────┐  ┌──────────┐  ┌──────────┐  ┌───────────┐  │
-│  │  Core   │  │Psychology│  │  Memory  │  │ Embodied │  │
-│  │(必须)   │  │ (可选)   │  │  (可选)   │  │  (可选)  │  │
-│  ├─────────┤  ├──────────┤  ├──────────┤  ├───────────┤  │
-│  │真善美   │  │PHQ-9     │  │长期记忆  │  │双系统    │  │
-│  │决策引擎 │  │GAD-7     │  │向量搜索  │  │7步思维链 │  │
-│  │价值观   │  │危机预警  │  │会话索引  │  │具身认知  │  │
-│  └─────────┘  └──────────┘  └──────────┘  └───────────┘  │
-└─────────────────────────────────────────────────────────┘
+┌─────────────────────────────────────────────────────────────┐
+│                     Xinchong v2.0                          │
+├─────────────────────────────────────────────────────────────┤
+│  ┌─────────────┐  ┌─────────────┐  ┌─────────────────────┐ │
+│  │   Agent     │  │  Platforms  │  │   Core Modules       │ │
+│  │   Core      │  │  (QQ/微信)   │  │  (真善美/心理/记忆)  │ │
+│  └─────────────┘  └─────────────┘  └─────────────────────┘ │
+├─────────────────────────────────────────────────────────────┤
+│  底层能力：                                                  │
+│  - OpenCode API 客户端（多 provider）                       │
+│  - Hermes 平台适配器（QQ + 微信）                           │
+│  - 记忆系统 + 心理健康检测                                 │
+└─────────────────────────────────────────────────────────────┘
 ```
 
-## 🔧 接入任意 AI
+## 📝 命令行选项
 
-```python
-from xinchong import XinChongMiddleware
+```bash
+xinchong --help
 
-# 作为中间层接入任何AI
-middleware = XinChongMiddleware(
-    ai_provider="openai",
-    modules=["core", "psychology", "memory"]
-)
-
-# 所有消息经过心虫处理
-response = middleware.chat("帮我写首诗")
+Options:
+  --mode [cli|platform]  运行模式 (默认: cli)
+  --config               配置文件路径
 ```
 
-## 📄 许可证
+## 🔧 开发
 
-MIT License
+```bash
+# 安装开发依赖
+pip install -e .[dev]
+
+# 运行测试
+pytest
+
+# 代码格式
+black src/
+```
 
 ---
 
 **心虫愿景**：让每一个 AI 都有温度 🐛
+
+---
+
+## 📄 许可证
+
+MIT License
