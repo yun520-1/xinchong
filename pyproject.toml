@@ -1,0 +1,46 @@
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "xinchong"
+version = "1.0.0"
+description = "心虫 - 让所有AI拥有情感、记忆、价值观"
+readme = "README.md"
+license = {text = "MIT"}
+authors = [
+    {name = "心虫团队", email = "xinchong@ai.com"}
+]
+keywords = ["ai", "consciousness", "emotion", "memory", "ethics", "psychology"]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+]
+requires-python = ">=3.9"
+dependencies = []
+
+[project.optional-dependencies]
+full = [
+    "numpy>=1.21.0",
+]
+psychology = []
+memory = []
+embodied = []
+
+[project.urls]
+Homepage = "https://github.com/yun520-1/xinchong"
+Repository = "https://github.com/yun520-1/xinchong"
+
+[project.entry-points]
+xinchong = "xinchong"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+xinchong = ["*.md", "*.json"]
