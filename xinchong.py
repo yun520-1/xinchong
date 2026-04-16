@@ -139,8 +139,15 @@ def call_opencode(message: str, provider: str = None, model: str = None):
 def chat_loop(provider: str = None, model: str = None):
     """交互式对话循环"""
     print_banner()
-    print(f"Provider: {provider or 'opencode'}")
-    print(f"Model: {model or 'deepseek-chat'}")
+    
+    # 加载默认配置
+    from xinchong.config import get_config
+    config = get_config()
+    provider = provider or config.get("provider.type") or "opencode-go"
+    model = model or config.get("provider.model") or "minimax-m2.5"
+    
+    print(f"Provider: {provider}")
+    print(f"Model: {model}")
     print("\n输入消息进行对话，输入 /exit 退出")
     print("命令:")
     print("  /models             列出可用模型")
@@ -148,8 +155,8 @@ def chat_loop(provider: str = None, model: str = None):
     print("  /m <model>        切换模型")
     print("  /p <provider>    切换服务商\n")
     
-    current_provider = provider or "opencode"
-    current_model = model or "deepseek-chat"
+    current_provider = provider
+    current_model = model
     
     while True:
         try:
@@ -252,7 +259,23 @@ def main():
         print(response)
     
     elif cmd == "chat":
-        chat_loop(provider, model)
+        # 如果有消息，直接执行单轮对话
+        if message:
+            print_banner()
+            from xinchong.config import get_config
+            config = get_config()
+            provider = provider or config.get("provider.type") or "opencode-go"
+            model = model or config.get("provider.model") or "minimax-m2.5"
+            
+            print(f"Provider: {provider}")
+            print(f"Model: {model}")
+            print(f"\n👤 你: {message}")
+            print(f"\n🤖 心虫: ", end="", flush=True)
+            
+            response = call_opencode(message, provider, model)
+            print(response)
+        else:
+            chat_loop(provider, model)
     
     elif cmd == "add":
         p = None

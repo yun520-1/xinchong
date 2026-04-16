@@ -12,8 +12,8 @@ from typing import Dict, Any, Optional
 # 默认配置
 DEFAULT_CONFIG = {
     "provider": {
-        "type": "opencode",
-        "model": "minimax-m2.5-free",
+        "type": "opencode-go",
+        "model": "minimax-m2.5",
         "api_key": os.getenv("OPENCODE_ZEN_API_KEY", "")
     },
     "platforms": {
