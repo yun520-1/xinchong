@@ -1,7 +1,7 @@
 #!/bin/bash
 # XinChong 心虫 CLI wrapper
 
-XINCHONG_DIR="$HOME/.hermes/xinchong"
+XINCHONG_DIR="${XINCHONG_HOME:-$HOME/.hermes/xinchong}"
 PYTHON="$HOME/.hermes/venv/bin/python"
 
 # Use venv python if available, otherwise fall back to system python

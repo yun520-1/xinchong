@@ -3,12 +3,42 @@
 ## 安装
 
 ```bash
-# 克隆或复制到 ~/.hermes/xinchong/
-git clone https://github.com/yun520-1/xinchong.git ~/.hermes/xinchong
+# 克隆到任意目录（推荐 ~/.hermes/xinchong 或 ~/xinchong）
+git clone https://github.com/yun520-1/xinchong.git ~/xinchong
 
-# 添加到 PATH（可选）
-echo 'alias xinchong="python3 ~/.hermes/xinchong/xinchong.py"' >> ~/.bashrc
-source ~/.bashrc
+# 或自定义安装目录
+git clone https://github.com/yun520-1/xinchong.git /your/path/xinchong
+export XINCHONG_HOME=/your/path/xinchong
+
+# 运行安装向导
+cd ~/xinchong
+python3 xinchong.py setup
+
+# 或直接运行（会自动引导配置）
+python3 xinchong.py chat
+```
+
+### 方式二：pip 安装
+
+```bash
+# 安装（会自动创建 ~/.xinchong 目录）
+pip3 install -e ~/xinchong
+
+# 或指定目录
+XINCHONG_HOME=/your/path xinchong -e ~/xinchong pip3 install -e .
+
+# 运行
+xinchong chat
+```
+
+### 方式三：一键安装脚本
+
+```bash
+# 默认安装到 ~/.xinchong
+bash ~/xinchong/install.sh
+
+# 或指定目录
+XINCHONG_HOME=/your/path bash ~/xinchong/install.sh
 ```
 
 ## 交互式安装

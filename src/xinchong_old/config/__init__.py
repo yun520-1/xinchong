@@ -9,36 +9,38 @@ from pathlib import Path
 from typing import Dict, Any, Optional
 
 
+# 默认配置
+DEFAULT_CONFIG = {
+    "provider": {
+        "type": "opencode-go",
+        "model": "minimax-m2.5",
+        "api_key": os.getenv("OPENCODE_ZEN_API_KEY", "")
+    },
+    "platforms": {
+        "weixin": {
+            "enabled": False,
+            "app_id": os.getenv("WEIXIN_APP_ID", ""),
+            "app_secret": os.getenv("WEIXIN_APP_SECRET", "")
+        },
+        "qq": {
+            "enabled": False,
+            "app_id": os.getenv("QQ_APP_ID", ""),
+            "client_secret": os.getenv("QQ_CLIENT_SECRET", "")
+        }
+    },
+    "memory": {
+        "enabled": True,
+        "storage_dir": os.path.expanduser("~/.xinchong/memory")
+    },
+    "psychology": {
+        "enabled": True,
+        "crisis_intervention": True
+    }
+}
+
+
 class Config:
     """配置管理类"""
-    
-    DEFAULT_CONFIG = {
-        "provider": {
-            "type": "openai",
-            "model": "gpt-4o",
-            "api_key": os.getenv("OPENAI_API_KEY", "")
-        },
-        "platforms": {
-            "weixin": {
-                "enabled": False,
-                "app_id": os.getenv("WEIXIN_APP_ID", ""),
-                "app_secret": os.getenv("WEIXIN_APP_SECRET", "")
-            },
-            "qq": {
-                "enabled": False,
-                "app_id": os.getenv("QQ_APP_ID", ""),
-                "client_secret": os.getenv("QQ_CLIENT_SECRET", "")
-            }
-        },
-        "memory": {
-            "enabled": True,
-            "storage_dir": os.path.expanduser("~/.xinchong/memory")
-        },
-        "psychology": {
-            "enabled": True,
-            "crisis_intervention": True
-        }
-    }
     
     def __init__(self, config_path: str = None):
         self.config_path = config_path or self._default_config_path()
@@ -51,7 +53,7 @@ class Config:
     
     def _load(self) -> Dict[str, Any]:
         """加载配置"""
-        config = self.DEFAULT_CONFIG.copy()
+        config = DEFAULT_CONFIG.copy()
         
         # 如果配置文件存在，读取并合并
         if os.path.exists(self.config_path):

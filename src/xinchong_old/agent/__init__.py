@@ -232,9 +232,7 @@ def run_cli():
     print("=" * 50)
     print("🐛 心虫 Agent v2.0 - CLI 模式")
     print("=" * 50)
-    print("输入内容开始对话，输入 'exit' 退出")
-    print()
-    print("首次运行? 输入 'install' 开始安装")
+    print("输入内容开始对话，输入 'status' 查看状态，输入 'platform' 进入平台模式，输入 'exit' 退出")
     print()
     
     # 初始化
@@ -242,16 +240,7 @@ def run_cli():
         agent = XinChongAgent()
     except Exception as e:
         print(f"初始化失败: {e}")
-        print()
-        # 尝试安装
-        if input("是否运行安装向导? (y/n): ").strip().lower() != "n":
-            from xinchong.setup import install
-            install()
-            try:
-                agent = XinChongAgent()
-            except Exception as e2:
-                print(f"仍然失败: {e2}")
-                return
+        return
     
     print(f"会话已开启: {agent.conversation.current_session_id}")
     print(f"Provider: {agent.config.provider.get('type', '未配置')}")
@@ -269,11 +258,6 @@ def run_cli():
                 agent.exit()
                 break
             
-            if user_input.lower() == "install":
-                from xinchong.setup import install
-                install()
-                continue
-            
             if user_input.lower() == "status":
                 print(agent.status())
                 continue
@@ -281,11 +265,6 @@ def run_cli():
             if user_input.lower() == "platform":
                 print("进入平台模式...")
                 asyncio.run(agent.run_platform_mode())
-                continue
-            
-            if user_input.lower() == "setup":
-                from xinchong.setup import auto_config
-                auto_config()
                 continue
             
             response = agent.chat(user_input)
@@ -309,8 +288,7 @@ def run_platform():
     asyncio.run(agent.run_platform_mode())
 
 
-def main():
-    """主入口点"""
+if __name__ == "__main__":
     import argparse
     
     parser = argparse.ArgumentParser(description="心虫 Agent v2.0")
@@ -324,7 +302,3 @@ def main():
         run_platform()
     else:
         run_cli()
-
-
-if __name__ == "__main__":
-    main()

@@ -91,7 +91,7 @@ echo ""
 echo -e "${GREEN}开始安装...${NC}"
 
 # 创建目标目录
-INSTALL_DIR="$HOME/.xinchong"
+INSTALL_DIR="${XINCHONG_HOME:-$HOME/.xinchong}"
 mkdir -p "$INSTALL_DIR"
 
 # 安装到 Python 包

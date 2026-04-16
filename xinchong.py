@@ -11,7 +11,7 @@ import subprocess
 from pathlib import Path
 
 # 添加 src 目录到路径
-XINCHONG_DIR = Path(os.path.expanduser("~/.hermes/xinchong"))
+XINCHONG_DIR = Path(os.environ.get("XINCHONG_HOME", os.path.expanduser("~/.hermes/xinchong")))
 sys.path.insert(0, str(XINCHONG_DIR / "src"))
 
 AUTH_FILE = XINCHONG_DIR / "auth.json"

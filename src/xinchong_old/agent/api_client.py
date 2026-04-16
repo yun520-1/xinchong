@@ -16,8 +16,8 @@ class APIClient:
         "openai", "anthropic", "deepseek", "openrouter", "google", "xai", "cohere",
         # 国内
         "minimax", "douyin", "wenxin", "tongyi", "hunyuan", "spark", "zhipu",
-        # 自定义
-        "opencode", "custom",
+        # 其他
+        "opencode", "opencode-go"
     ]
     
     # 默认模型
@@ -37,9 +37,9 @@ class APIClient:
         "hunyuan": "hunyuan-pro",
         "spark": "spark-pro",
         "zhipu": "glm-4",
-        # 自定义
-        "opencode": "minimax-m2.5-free",
-        "custom": "gpt-4o",
+        # OpenCode
+        "opencode": "deepseek-chat",
+        "opencode-go": "deepseek-chat"
     }
     
     # API 端点
@@ -59,46 +59,19 @@ class APIClient:
         "hunyuan": "https://hunyuan.tencentcloudapi.com/v3/text/chatcompletion",
         "spark": "wss://spark-api.xf-yun.com/v3.5/chat",
         "zhipu": "https://open.bigmodel.cn/api/paas/v4/chat/completions",
-        # 自定义
-        "opencode": "https://opencode.ai/zen/v1/chat/completions",
-        "custom": "",
+        # OpenCode
+        "opencode": "https://opencode.cn/v1/chat/completions",
+        "opencode-go": "https://opencode.cn/v1/chat/completions"
     }
     
     def __init__(self, provider: str = "openai", model: str = None):
         self.provider = provider.lower()
         self.model = model or self.DEFAULT_MODELS.get(self.provider, "gpt-4o")
         self.api_key = self._get_api_key()
-        # 先从环境变量读取 base_url
-        self.api_base = os.environ.get(f"{self.provider.upper()}_API_BASE", 
-                   os.environ.get("OPENCODE_API_BASE", ""))
+        self.api_base = os.environ.get(f"{self.provider.upper()}_API_BASE", "")
     
     def _get_api_key(self) -> str:
-        """获取 API key - 先从配置读取，再从环境变量"""
-        # 从配置文件读取
-        from pathlib import Path
-        config_file = Path.home() / ".xinchong" / "config.yaml"
-        if config_file.exists():
-            try:
-                import yaml
-                with open(config_file, encoding="utf-8") as f:
-                    config = yaml.safe_load(f)
-                if config and "provider" in config:
-                    p = config["provider"]
-                    if p.get("api_key"):
-                        key = p["api_key"]
-                        # 同时保存 base_url
-                        if p.get("base_url"):
-                            os.environ["OPENCODE_API_BASE"] = p["base_url"]
-                        return key
-                    if p.get("type") and p.get("base_url"):
-                        # 自定义 provider，从环境变量获取
-                        os.environ["OPENCODE_API_BASE"] = p.get("base_url", "")
-                        env_var = "OPENCODE_ZEN_API_KEY" if p.get("type") == "opencode" else "OPENAI_API_KEY"
-                        return os.environ.get(env_var, "")
-            except:
-                pass
-        
-        # 环境变量
+        """获取 API key"""
         env_vars = {
             "openai": "OPENAI_API_KEY",
             "anthropic": "ANTHROPIC_API_KEY",
@@ -115,14 +88,14 @@ class APIClient:
             "hunyuan": "HUNYUAN_API_KEY",
             "spark": "SPARK_API_KEY",
             "zhipu": "ZHIPU_API_KEY",
-            # 自定义
+            # OpenCode
             "opencode": "OPENCODE_ZEN_API_KEY",
-            "custom": "OPENCODE_ZEN_API_KEY",
+            "opencode-go": "OPENCODE_ZEN_API_KEY"
         }
         
         key = os.environ.get(env_vars.get(self.provider, ""))
         if not key:
-            raise ValueError(f"Please set {env_vars[self.provider]} environment variable or configure in config.yaml")
+            raise ValueError(f"Please set {env_vars[self.provider]} environment variable")
         return key
     
     def chat(self, messages: List[Dict], system_prompt: str = None) -> str:
