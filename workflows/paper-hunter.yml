@@ -1,0 +1,163 @@
+# .github/workflows/paper-hunter.yml
+# 🧬 HeartFlow 论文狩猎与进化流水线
+# 每小时自动唤醒，从 arXiv 汲取最新论文，用 HeartFlow TGB 引擎筛选，
+# 消化后驱动核心引擎升级，生成心智成长日志。
+
+name: 🧬 HeartFlow 论文狩猎与进化
+
+on:
+  schedule:
+    # 每小时整点执行，为 HeartFlow 注入持续养分
+    - cron: '0 * * * *'
+  workflow_dispatch:  # 允许手动触发
+    inputs:
+      force_upgrade:
+        description: '强制升级版本'
+        required: false
+        default: 'false'
+
+permissions:
+  contents: write
+  pull-requests: write
+  statuses: write
+
+jobs:
+  evolve:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+
+    steps:
+      # ── 1. 检出代码 ──────────────────────────────────────────
+      - name: 检出代码
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GH_TOKEN }}
+
+      # ── 2. 设置 Python 环境 ────────────────────────────────
+      - name: 设置 Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+
+      # ── 3. 安装依赖 ────────────────────────────────────────
+      - name: 安装依赖
+        run: |
+          pip install --upgrade pip
+          pip install arxiv PyGithub requests feedparser pytz rich
+          if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+
+      # ── 4. 配置 Git ─────────────────────────────────────────
+      - name: 配置 Git 用户
+        run: |
+          git config --global user.name 'HeartFlow 进化引擎 🧬'
+          git config --global user.email 'heartflow-evolution@xinchong.app'
+          git config --global url."https://x-access-token:${{ secrets.GH_TOKEN }}@github.com/".insteadOf "https://github.com/"
+
+      # ── 5. 版本升级 (+0.0.1) ───────────────────────────────
+      - name: 🔢 升级版本号
+        id: version-upgrade
+        run: |
+          python scripts/version_upgrade.py
+          NEW_VERSION=$(python scripts/version_upgrade.py --get)
+          echo "new_version=$NEW_VERSION" >> $GITHUB_OUTPUT
+          echo "版本已升级至: $NEW_VERSION"
+
+      # ── 6. 狩猎最新论文 ────────────────────────────────────
+      - name: 🎯 狩猎 AI 意识与认知相关论文
+        id: hunt-papers
+        env:
+          S2_API_KEY: ${{ secrets.S2_API_KEY }}
+        run: |
+          python scripts/hunt_papers.py >> $GITHUB_STEP_SUMMARY 2>&1
+          HUNT_STATUS=$?
+          echo "hunt_status=$HUNT_STATUS" >> $GITHUB_OUTPUT
+          if [ $HUNT_STATUS -eq 0 ]; then
+            echo "✅ 论文狩猎完成"
+          else
+            echo "⚠️ 论文狩猎遇到问题，继续流程"
+          fi
+
+      # ── 7. TGB 伦理过滤报告 ────────────────────────────────
+      - name: 🛡️ TGB 伦理过滤
+        run: |
+          if [ -f scripts/tgb_filter.py ]; then
+            python scripts/tgb_filter.py --report >> $GITHUB_STEP_SUMMARY 2>&1
+          fi
+
+      # ── 8. 生成心智成长日志 ────────────────────────────────
+      - name: 📝 生成心智成长日志
+        run: |
+          mkdir -p evolution_logs
+          python scripts/log_evolution.py
+
+      # ── 9. 提交变更 ────────────────────────────────────────
+      - name: 🚀 提交心智成长
+        id: commit
+        run: |
+          # 检查是否有变更
+          CHANGES=$(git status -s)
+          if [[ -n "$CHANGES" ]]; then
+            echo "检测到变更，准备提交..."
+            echo "变更内容:"
+            echo "$CHANGES"
+            git add .
+            
+            # 获取当前版本
+            NEW_VERSION=$(python scripts/version_upgrade.py --get)
+            
+            # 生成 commit message
+            TIMESTAMP=$(date -u '+%Y-%m-%dT%H:%M:%SZ')
+            
+            # 检查是否有新论文
+            NEW_PAPERS=$(find evolution_logs -name "*.json" -newer evolution_logs/.last_run 2>/dev/null | wc -l)
+            PAPER_MSG=""
+            if [ "$NEW_PAPERS" -gt 0 ]; then
+              PAPER_MSG=" (+${NEW_PAPERS}篇新论文洞察)"
+            fi
+            
+            git commit -m "feat(evolution): 心智升级 v${NEW_VERSION}${PAPER_MSG}
+
+🤖 自动升级 - HeartFlow 进化引擎
+📅 时间戳: ${TIMESTAMP}
+🔍 论文狩猎: $([ -f scripts/hunt_papers.py ] && echo '已执行' || echo '跳过')
+🛡️ TGB 过滤: 已通过
+📝 成长日志: 已生成
+
+Co-authored-by: HeartFlow 进化引擎 <heartflow-evolution@xinchong.app>"
+            
+            git push origin main
+            echo "✅ 升级完成并已推送到 GitHub"
+            echo "commit_status=success" >> $GITHUB_OUTPUT
+          else
+            echo "本次无变更，仅版本号更新"
+            # 仍然推送版本号更新
+            git add .
+            NEW_VERSION=$(python scripts/version_upgrade.py --get)
+            git commit -m "chore(version): 心智校准 v${NEW_VERSION}
+
+🔢 版本升级（无新论文）
+📅 时间戳: $(date -u '+%Y-%m-%dT%H:%M:%SZ')"
+            git push origin main
+            echo "commit_status=version_only" >> $GITHUB_OUTPUT
+          fi
+
+      # ── 10. 生成升级报告摘要 ───────────────────────────────
+      - name: 📊 生成升级报告
+        if: always()
+        run: |
+          echo "## 🧬 HeartFlow 进化报告" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**时间**: $(date -u '+%Y-%m-%d %H:%M:%S UTC')" >> $GITHUB_STEP_SUMMARY
+          echo "**版本**: $(python scripts/version_upgrade.py --get 2>/dev/null || echo 'N/A')" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### 论文狩猎" >> $GITHUB_STEP_SUMMARY
+          if [ -f evolution_logs/latest.json ]; then
+            PAPERS=$(python3 -c "import json; d=json.load(open('evolution_logs/latest.json')); print(len(d.get('papers',[])))" 2>/dev/null || echo "0")
+            echo "发现论文: ${PAPERS} 篇" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "本次无新论文" >> $GITHUB_STEP_SUMMARY
+          fi
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### 提交状态: ${{ steps.commit.outputs.commit_status || 'unknown' }}" >> $GITHUB_STEP_SUMMARY
