@@ -1,19 +1,29 @@
-# Python
+# Dependencies
 __pycache__/
 *.pyc
 *.pyo
-*.pyd
-.Python/
-*.so
-*.egg
 *.egg-info/
 dist/
 build/
+*.egg
 
-# Virtual env
+# Virtual environments
 venv/
 env/
 .venv/
+
+# Environment
+.env
+.env.local
+.env.*.local
+
+# Data (persistent, don't commit)
+data/sessions/*.json
+data/memory/*.json
+
+# Logs
+*.log
+*.sqlite
 
 # IDE
 .vscode/
@@ -21,6 +31,15 @@ env/
 *.swp
 *.swo
 
-# XinChong 本地
-auth.json
-*.log
+# OS
+.DS_Store
+Thumbs.db
+
+# Python
+.pytest_cache/
+.coverage
+htmlcov/
+.mypy_cache/
+
+# Git
+.git/
