@@ -210,15 +210,24 @@ def sync_to_github() -> bool:
         )
         files = [f.strip() for f in r.stdout.strip().split("\n") if f.strip()]
     except:
+        # Essential files only for fallback
         files = [
             "VERSION.txt", "config.yaml", "requirements.txt", "README.md",
-            "run_cli.py", "run_web.py",
-            "scripts/__init__.py", "scripts/hunt_papers.py", "scripts/version_upgrade.py",
-            "src/__init__.py", "src/heartflow.py", "src/api_client.py", 
-            "src/conversation.py", "src/web/__init__.py", "src/web/app.py",
-            "src/web/templates/__init__.py", "src/web/templates/index.html",
+            "run_cli.py", "run_web.py", "CHANGELOG.md",
+            "scripts/version_upgrade.py",
+            "src/heartflow.py",
             ".gitignore",
         ]
+    
+    # Filter to essential files only (skip large files)
+    essential = ["VERSION.txt", "config.yaml", "requirements.txt", "README.md",
+                "run_cli.py", "run_web.py", "CHANGELOG.md", ".gitignore",
+                "scripts/version_upgrade.py", "scripts/hunt_papers.py",
+                "scripts/tgb_filter.py", "scripts/safeguards.py",
+                "src/heartflow.py", "src/api_client.py", 
+                "src/conversation.py", "src/web/app.py",
+                "src/web/templates/index.html"]
+    files = [f for f in files if f in essential]
     
     synced = 0
     errors = 0
