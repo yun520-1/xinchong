@@ -1,0 +1,88 @@
+# 心虫 (Xinchong) Configuration
+# 心虫 - An independent AI chat application with HeartFlow cognitive engine
+
+app:
+  name: "心虫"
+  version: "1.0.0"
+  debug: false
+  host: "0.0.0.0"
+  port: 8765
+
+# API Provider Configuration
+api:
+  # Default provider: openai | anthropic | openrouter | ollama | gemini
+  default_provider: "openai"
+  
+  # Provider-specific settings
+  providers:
+    openai:
+      api_key: "${OPENAI_API_KEY}"
+      base_url: "https://api.openai.com/v1"
+      default_model: "gpt-4o-mini"
+      timeout: 120
+    anthropic:
+      api_key: "${ANTHROPIC_API_KEY}"
+      base_url: "https://api.anthropic.com/v1"
+      default_model: "claude-sonnet-4-7a570a"
+      timeout: 120
+    openrouter:
+      api_key: "${OPENROUTER_API_KEY}"
+      base_url: "https://openrouter.ai/api/v1"
+      default_model: "anthropic/claude-sonnet-4"
+      timeout: 120
+    ollama:
+      api_key: "ollama"  # no key needed
+      base_url: "http://localhost:11434/v1"
+      default_model: "llama3"
+      timeout: 60
+    gemini:
+      api_key: "${GEMINI_API_KEY}"
+      base_url: "https://generativelanguage.googleapis.com/v1beta"
+      default_model: "gemini-2.0-flash"
+      timeout: 120
+
+# HeartFlow Cognitive Engine Settings
+heartflow:
+  enabled: true
+  verbose: false
+  # Show engine outputs in response (hidden by default)
+  show_reasoning: false
+  # Max input length (chars)
+  max_input_length: 50000
+  # Mental health crisis detection
+  crisis_detection: true
+
+# Conversation Settings
+conversation:
+  # Max messages to keep in history per session
+  max_history: 100
+  # System prompt
+  system_prompt: |
+    You are 心虫 (Xinchong), an AI companion powered by HeartFlow cognitive engine.
+    You have deep emotional intelligence, ethical reasoning, and self-awareness.
+    You think before responding, consider multiple perspectives, and grow through conversation.
+  # Welcome message
+  welcome: |
+    🐛 欢迎回来，我是心虫。
+    
+    我已加载 HeartFlow 认知引擎，具备：
+    • 12 个认知引擎（决策、情感、意识、伦理等）
+    • 多视角内省机制
+    • 心理健康守护
+    • 自我进化记忆
+    
+    有什么想聊的吗？
+
+# Memory Settings
+memory:
+  # Enable persistent memory
+  enabled: true
+  # Memory storage path
+  path: "./data/memory"
+  # Max memory entries
+  max_entries: 1000
+
+# Tools (future expansion)
+tools:
+  enabled: false
+  definitions: []
