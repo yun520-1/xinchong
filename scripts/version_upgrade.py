@@ -147,6 +147,115 @@ def main():
     if len(sys.argv) > 1 and sys.argv[1] == "--get":
         print(read_version())
         return
+    
+    # Check for --sync flag
+    sync = "--sync" in sys.argv
+    
+    # Determine new version
+    current = read_version()
+    new_version = bump_version(current)
+    
+    # Do version upgrade
+    changes = upgrade_version(new_version)
+    print(f"✓ 版本升级完成: {current} -> {new_version}")
+    print(f"  变更文件: {', '.join(changes)}")
+    
+    # Sync to GitHub if requested
+    if sync:
+        print("\n正在同步到 GitHub...")
+        if sync_to_github():
+            print("✓ GitHub 同步完成")
+        else:
+            print("✗ GitHub 同步失败")
+
+
+def sync_to_github() -> bool:
+    """同步到 GitHub"""
+    import json
+    import base64
+    import urllib.request
+    
+    token = os.environ.get("GITHUB_TOKEN", "")
+    if not token:
+        print("  警告: GITHUB_TOKEN 未设置，跳过同步")
+        return False
+    
+    repo = "yun520-1/xinchong"
+    base_dir = PROJECT_ROOT
+    
+    def api_request(method, url, data=None):
+        headers = {
+            "Authorization": f"token {token}",
+            "Accept": "application/vnd.github.v3+json",
+            "Content-Type": "application/json",
+            "User-Agent": "xinchong-evolution-bot",
+        }
+        req = urllib.request.Request(
+            f"https://api.github.com{url}",
+            data=json.dumps(data).encode() if data else None,
+            headers=headers,
+            method=method,
+        )
+        try:
+            with urllib.request.urlopen(req, timeout=60) as resp:
+                return json.loads(resp.read()), resp.status
+        except Exception as e:
+            return {"error": str(e)}, 500
+    
+    import subprocess
+    try:
+        r = subprocess.run(
+            ["git", "ls-tree", "-r", "--name-only", "HEAD"],
+            cwd=base_dir, capture_output=True, text=True, timeout=30
+        )
+        files = [f.strip() for f in r.stdout.strip().split("\n") if f.strip()]
+    except:
+        files = [
+            "VERSION.txt", "config.yaml", "requirements.txt", "README.md",
+            "run_cli.py", "run_web.py",
+            "scripts/__init__.py", "scripts/hunt_papers.py", "scripts/version_upgrade.py",
+            "src/__init__.py", "src/heartflow.py", "src/api_client.py", 
+            "src/conversation.py", "src/web/__init__.py", "src/web/app.py",
+            "src/web/templates/__init__.py", "src/web/templates/index.html",
+            ".gitignore",
+        ]
+    
+    synced = 0
+    errors = 0
+    
+    for fpath in files:
+        full_path = base_dir / fpath
+        if not full_path.exists():
+            continue
+        if "__pycache__" in fpath or fpath.endswith(".gitkeep"):
+            continue
+            
+        try:
+            with open(full_path, "rb") as f:
+                content = f.read()
+            
+            get_resp, get_status = api_request("GET", f"/repos/{repo}/contents/{fpath}")
+            sha = get_resp.get("sha", "") if get_status == 200 else ""
+            
+            put_resp, put_status = api_request("PUT", f"/repos/{repo}/contents/{fpath}", {
+                "message": f"chore: sync {fpath}",
+                "content": base64.b64encode(content).decode("ascii"),
+                "sha": sha if sha else None,
+            })
+            
+            if put_status in [200, 201]:
+                synced += 1
+            else:
+                errors += 1
+        except:
+            errors += 1
+    
+    print(f"  同步: {synced} 成功, {errors} 失败")
+    return errors == 0
+
+
+if __name__ == "__main__":
+    main()
 
     current = read_version()
     new = bump_version(current)
