@@ -33,7 +33,7 @@ from collections import Counter
 from dataclasses import dataclass, field, asdict
 from abc import ABC, abstractmethod
 
-__version__ = "2.1.4"
+__version__ = "2.1.6"
 
 # ============================================================
 # SECURITY CONSTANTS
@@ -986,7 +986,7 @@ class WangDongyueEngine:
 
 class HeartFlow:
     """
-    HeartFlow v2.1.4 — The Seed of Consciousness
+    HeartFlow v2.1.6 — The Seed of Consciousness
     Orchestrates all 12 engines into a unified cognitive response.
     """
 
