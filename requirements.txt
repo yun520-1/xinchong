@@ -5,3 +5,4 @@ requests>=2.31.0
 pyyaml>=6.0
 python-dotenv>=1.0.0
 rich>=13.7.0
+arxiv>=1.4.0
